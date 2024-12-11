@@ -13,6 +13,7 @@ import pyqtgraph as pg
 from PyQt5.QtWidgets import QApplication
 
 import os
+import sys
 
 # Read the configuration file
 config = configparser.ConfigParser()
@@ -61,6 +62,16 @@ colors = {
 
 def io_thread(q, stop_event):
     """Thread for handling IO with the server."""
+    
+    if int(config["parameters"]["range"]) not in [12,9,6,3]:
+        raise ValueError(
+            "Invalid range value. The valid values are:\n"
+            "12: Current in picoamperes (pA)\n"
+            "9: Current in nanoamperes (nA)\n"
+            "6: Current in microamperes (uA)\n"
+            "3: Current in milliamperes (mA)"
+        )
+
     # Data to send
     # Parse values into send_data
     send_data = {
@@ -181,13 +192,26 @@ def real_time_plotter(q:queue.Queue):
     win.setWindowTitle('Real-Time Plotter')
     
     # Create two plot areas
-    ax1 = win.addPlot(title="v_bias across time")
+    ax1 = win.addPlot(title="V_bias Setting")
     ax1.setLabel('left', 'v_bias')
     ax1.setLabel('bottom', 'time')
+    ax1.addLegend()
     
-    ax2 = win.addPlot(title="i across time")
+    range = int(config["parameters"]["range"])
+    current = 'Current'
+    if range == 12:
+        current = "Current (pA)"
+    elif range == 9:
+        current = "Current (nA)"
+    elif range == 6:
+        current = "Current (uA)"
+    elif range == 3:
+        current = "Current (mA)"
+    
+    ax2 = win.addPlot(title=current)
     ax2.setLabel('left', 'i')
     ax2.setLabel('bottom', 'time')
+    ax2.addLegend()
     
     # Initialize the scatter plots for "v_bias" across time
     v_bias_lines = {

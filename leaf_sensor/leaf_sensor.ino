@@ -5,6 +5,7 @@
  
 LMP91000 pStat[4];
 const int MENB[4] = {2, 3, 4, 5};
+// const int MENB[4] = {5, 4, 3, 2};
 const int ANALOG[4] = {A3, A2, A1, A0};
 
 const int16_t opVolt = 3300; //milliVolts if working with a 3.3V device
@@ -183,6 +184,7 @@ void runAmp(
 
     for(uint8_t j = 0; j < 4; j++){  
       pStat[j].enable();
+      // if(j==3) pStat[j].disable();
       if(voltageArray[j][i] < 0) pStat[j].setNegBias();
       else pStat[j].setPosBias();
     
