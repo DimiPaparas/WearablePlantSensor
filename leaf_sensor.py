@@ -20,12 +20,11 @@ config_filename = "config.ini"
 if not os.path.exists(config_filename):
     # Set default values
     config['parameters'] = {
-        'sample_interval': '10',
-        'range': '6',
+        'sample_interval': '100',
         'pre_stepV': '0,0,0,0',
-        'v1': '100,200,400,600',
+        'v1': '0,0,0,0',
         'v2': '0,0,0,0',
-        'gain': '2,2,2,2',
+        'gain': '5,5,5,5',
         'quietTime': '1000',
         't1': '1000',
         't2': '1000'
@@ -60,21 +59,12 @@ colors = {
 
 def io_thread(q, stop_event):
     """Thread for handling IO with the server."""
-    
-    if int(config["parameters"]["range"]) not in [12,9,6,3]:
-        raise ValueError(
-            "Invalid range value. The valid values are:\n"
-            "12: Current in picoamperes (pA)\n"
-            "9: Current in nanoamperes (nA)\n"
-            "6: Current in microamperes (uA)\n"
-            "3: Current in milliamperes (mA)"
-        )
 
     # Data to send
     # Parse values into send_data
     send_data = {
         "sample_interval": int(config["parameters"]["sample_interval"]),
-        "range": int(config["parameters"]["range"]),
+        "range": int(6),
         "pre_stepV": list(map(int, config["parameters"]["pre_stepV"].split(","))),
         "v1": list(map(int, config["parameters"]["v1"].split(","))),
         "v2": list(map(int, config["parameters"]["v2"].split(","))),
@@ -118,6 +108,8 @@ def io_thread(q, stop_event):
                     for row in rows:
                         row = row.split(',')
                         if len(row) == 12:
+                            for i in [1,4,7]:
+                                row[i] = str(float(row[i])/1000.0)
                             print(row)
                             q.put([float(x) for x in row])
                             csvwriter.writerow(row)
@@ -142,18 +134,7 @@ def real_time_plotter(q:queue.Queue):
     ax1.setLabel('bottom', 'time')
     ax1.addLegend()
     
-    range = int(config["parameters"]["range"])
-    current = 'Current'
-    if range == 12:
-        current = "Current (pA)"
-    elif range == 9:
-        current = "Current (nA)"
-    elif range == 6:
-        current = "Current (uA)"
-    elif range == 3:
-        current = "Current (mA)"
-    
-    ax2 = win.addPlot(title=current)
+    ax2 = win.addPlot(title='Current (uA)')
     ax2.setLabel('left', 'i')
     ax2.setLabel('bottom', 'time')
     ax2.addLegend()
