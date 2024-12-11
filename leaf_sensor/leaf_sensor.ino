@@ -175,13 +175,9 @@ void runAmp(
   //i = 1 is first step potential
   //i = 2 is second step potential
   unsigned long startTime;
-  unsigned long refTime = millis();;
-  for(uint8_t i = 0; i < 3; i++)
-  {
-    // uint32_t fs = timeArray[i]/sample_interval;
-    uint32_t fs = sample_interval;
-    Serial.println(fs);
-
+  unsigned long refTime = millis();
+  uint32_t fs = sample_interval;
+  for(uint8_t i = 0; i < 3; i++){
     for(uint8_t j = 0; j < 4; j++){  
       pStat[j].enable();
       // if(j==3) pStat[j].disable();
@@ -200,24 +196,15 @@ void runAmp(
     {
       String data = "";
       for(uint8_t j = 0; j < 4; j++){
-        // Serial.print((uint16_t)(opVolt*TIA_BIAS[abs(voltageArray[j][i])]*(voltageArray[j][i]/abs(voltageArray[j][i]))));
-        // Serial.print(",");
-        // Serial.print(millis());
-        // Serial.print(",");
-        // Serial.println(pow(10,range)*pStat[j].getCurrent(pStat[j].getOutput(A0), opVolt/1000.0, resolution));
         pStat[j].enable();
         data +=
           String((int16_t)(opVolt * TIA_BIAS[abs(voltageArray[j][i])] * (voltageArray[j][i] / abs(voltageArray[j][i])))) + ","
           + String(millis()-refTime) + ","
           + String(pow(10, range) * pStat[j].getCurrent(pStat[j].getOutput(ANALOG[j]), opVolt / 1000.0, resolution)) + ",";
         pStat[j].disable();
-        // Send the data over serial and WiFi
-        // Serial.print(data);
       }
       data += "\n";
       client.print(data);
-      // Serial.print(data);
-      // delay(fs);
 
       if(sampleTime + fs > startTime + timeArray[i])
         break;

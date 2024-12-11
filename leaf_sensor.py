@@ -4,8 +4,6 @@ import csv
 import time
 import threading
 import queue
-import matplotlib.pyplot as plt
-import numpy as np
 import configparser
 import shutil
 
@@ -128,59 +126,6 @@ def io_thread(q, stop_event):
                         break
             except Exception as e:
                 print(f"Error: {e}")
-
-# def real_time_plotter(q):
-#     """Plotting happens in the main thread."""
-#     plt.ion()  # Turn on interactive mode
-    
-#     # Create two subplots
-#     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8))
-    
-#     # Initialize line objects for "v_bias" across time
-#     v_bias_lines = {
-#         key: ax1.plot([], [], marker='o', label=key)[0] for key in headers if "v_bias" in key
-#     }
-#     ax1.set_title("v_bias across time")
-#     ax1.set_xlabel("time")
-#     ax1.set_ylabel("v_bias")
-#     ax1.legend(loc="upper left", bbox_to_anchor=(1, 1))  # Place legend outside
-    
-#     # Initialize line objects for "i" across time
-#     i_lines = {
-#         key: ax2.plot([], [], marker='o', label=key)[0] for key in headers if key.startswith("i")
-#     }
-#     ax2.set_title("i across time")
-#     ax2.set_xlabel("time")
-#     ax2.set_ylabel("i")
-#     ax2.legend(loc="upper left", bbox_to_anchor=(1, 1))  # Place legend outside
-    
-#     while plt.fignum_exists(fig.number):
-#         try:
-#             new_data = q.get(timeout=1)
-#             if not new_data or len(new_data) != len(headers):
-#                 plt.pause(0.1)
-#                 continue
-            
-#             # Append new data to the corresponding storage
-#             for i, key in enumerate(headers):
-#                 data[key].append(new_data[i])
-            
-#             # Update v_bias plots
-#             for key, line in v_bias_lines.items():
-#                 line.set_data(data["time1"], data[key])  # Assuming "time1" as the x-axis
-#             ax1.relim()
-#             ax1.autoscale_view()
-            
-#             # Update i plots
-#             for key, line in i_lines.items():
-#                 line.set_data(data["time1"], data[key])  # Assuming "time1" as the x-axis
-#             ax2.relim()
-#             ax2.autoscale_view()
-            
-#             plt.pause(0.01)  # Allow GUI events to process
-#         except queue.Empty:
-#             plt.pause(0.1)
-#             continue
 
 def real_time_plotter(q:queue.Queue):
     """Plotting happens in the main thread using pyqtgraph."""
