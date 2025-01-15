@@ -12,7 +12,7 @@ const int16_t opVolt = 3300; //milliVolts if working with a 3.3V device
 const uint8_t resolution = 10; //10-bits
 
 char ssid[] = "Leaf_Sensor_AP";
-char pass[] = "password123";
+char pass[] = "Leaf_Sensor_AP_password";
 
 IPAddress local_IP(192, 168, 1, 100);
 IPAddress gateway(192, 168, 1, 1);
