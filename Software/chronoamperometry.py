@@ -11,7 +11,6 @@ import pyqtgraph as pg
 from PyQt5.QtWidgets import QApplication
 
 import os
-import sys
 
 # Read the configuration file
 config = configparser.ConfigParser()
@@ -19,6 +18,10 @@ config_filename = "config.ini"
 # Check if the config file exists
 if not os.path.exists(config_filename):
     # Set default values
+    # - Voltages are in mV
+    # - Time is in ms
+    # - Gain is set accorind to
+    #   the datasheet
     config['parameters'] = {
         'sample_interval': '100',
         'pre_stepV': '0,0,0,0',
@@ -40,7 +43,7 @@ else:
 config.read(config_filename)
 
 # Configuration for the server
-HOST = "192.168.1.100"  # IP address of the Arduino Nano 33 IoT
+HOST = "192.168.1.100" # IP address of the Arduino Nano 33 IoT
 PORT = 80              # Port number matching the server
 
 # Headers and indices (for reference)
